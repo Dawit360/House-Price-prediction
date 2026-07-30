@@ -1,0 +1,377 @@
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AI House Price Predictor</title>
+
+<style>
+
+body{
+font-family:Arial,Helvetica,sans-serif;
+background:linear-gradient(135deg,#667eea,#764ba2);
+margin:0;
+padding:30px;
+}
+
+.container{
+max-width:700px;
+margin:auto;
+}
+
+.section,.chart-section{
+background:white;
+padding:30px;
+border-radius:15px;
+box-shadow:0 10px 25px rgba(0,0,0,.2);
+margin-bottom:30px;
+}
+
+h2{
+text-align:center;
+color:#333;
+}
+
+label{
+display:block;
+margin-top:15px;
+margin-bottom:7px;
+font-weight:bold;
+color:#333;
+}
+
+.range-info{
+font-size:13px;
+color:#666;
+margin-top:5px;
+margin-bottom:10px;
+}
+
+input[type="number"],select{
+
+width:100%;
+padding:12px;
+border:1px solid #ccc;
+border-radius:8px;
+font-size:16px;
+box-sizing:border-box;
+
+}
+
+input:focus,select:focus{
+
+outline:none;
+border-color:#667eea;
+box-shadow:0 0 8px rgba(102,126,234,.4);
+
+}
+
+input[type="submit"]{
+
+width:100%;
+margin-top:25px;
+padding:14px;
+background:#667eea;
+color:white;
+border:none;
+border-radius:10px;
+font-size:18px;
+cursor:pointer;
+
+}
+
+input[type="submit"]:hover{
+
+background:#5563c1;
+
+}
+
+.result{
+
+margin-top:25px;
+padding:15px;
+background:#eef2ff;
+border-radius:10px;
+text-align:center;
+font-size:20px;
+font-weight:bold;
+
+}
+
+.chart-section{
+
+text-align:center;
+
+}
+
+.chart-section p{
+
+color:#555;
+
+}
+
+.chart-image{
+
+width:100%;
+max-width:650px;
+border-radius:10px;
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<div class="section">
+
+
+<h2>🏠 AI House Price Predictor</h2>
+
+
+<form action="/result" method="post">
+
+
+<label>Number of Rooms</label>
+<input type="number" 
+name="Number_of_Rooms" 
+min="1" 
+max="10" 
+required>
+
+<p class="range-info">Valid input: 1 - 10 rooms</p>
+
+
+
+<label>Site Area (sqm)</label>
+<input type="number" 
+name="Site_Area_sqm" 
+min="50" 
+max="1000" 
+required>
+
+<p class="range-info">Valid input: 50 - 1000 sqm</p>
+
+
+
+<label>Built Area (sqm)</label>
+<input type="number" 
+name="Built_Area_sqm" 
+min="30" 
+max="800" 
+required>
+
+<p class="range-info">Valid input: 30 - 800 sqm</p>
+
+
+
+<label>Property Age (Years)</label>
+<input type="number" 
+name="Property_Years" 
+min="0" 
+max="50" 
+required>
+
+<p class="range-info">Valid input: 0 - 50 years</p>
+
+
+
+<label>Construction Materials</label>
+
+<select name="Construction_Materials" required>
+
+<option value="Concrete">Concrete</option>
+<option value="Mud&Wood">Mud & Wood</option>
+
+</select>
+
+
+
+<label>Housing Typology</label>
+
+<select name="Housing_Typology" required>
+
+<option value="Semi-detached">Semi-detached</option>
+<option value="Condominium">Condominium</option>
+<option value="Detached">Detached</option>
+
+</select>
+
+
+
+<label>Land Value Grading</label>
+
+<select name="Land_Value_Grading" required>
+
+<option value="Low">Low</option>
+<option value="Medium">Medium</option>
+<option value="High">High</option>
+
+</select>
+
+
+
+<label>Nearest Road Type</label>
+
+<select name="Type_of_Nearest_Road" required>
+
+<option value="Asphalt">Asphalt</option>
+<option value="Gravel">Gravel</option>
+
+</select>
+
+
+
+
+<label>Distance to CBD (km)</label>
+
+<input type="number"
+step="0.01"
+min="0"
+name="Proximity_to_CBD_km"
+required>
+
+<p class="range-info">Valid input: 0 km or greater</p>
+
+
+
+
+<label>Distance to Bus Station (km)</label>
+
+<input type="number"
+step="0.01"
+min="0"
+name="Proximity_to_Bus_Station_km"
+required>
+
+<p class="range-info">Valid input: 0 km or greater</p>
+
+
+
+
+<label>Distance to Schools (km)</label>
+
+<input type="number"
+step="0.01"
+min="0"
+name="Proximity_to_Schools_km"
+required>
+
+<p class="range-info">Valid input: 0 km or greater</p>
+
+
+
+
+<input type="submit" value="Predict">
+
+
+</form>
+
+
+
+{% if prediction_text %}
+
+<div class="result">
+
+{{ prediction_text }}
+
+</div>
+
+{% endif %}
+
+
+
+</div>
+
+
+
+<div class="chart-section">
+
+
+<h2>📊 Feature Correlation with House Price</h2>
+
+<p>Shows how strongly each feature is related to house price.</p>
+
+
+<img src="{{ url_for('static',filename='correlation.png') }}" 
+class="chart-image">
+
+
+</div>
+
+
+</div>
+
+
+
+<script>
+
+
+document.querySelectorAll('input[type="number"]').forEach(input=>{
+
+
+input.addEventListener("input",function(){
+
+
+let value = Number(this.value);
+
+let min = Number(this.min);
+
+let max = Number(this.max);
+
+
+
+if(this.value !== ""){
+
+
+if(value < min){
+
+this.value = min;
+
+}
+
+
+
+if(this.max !== "" && value > max){
+
+this.value = max;
+
+}
+
+
+}
+
+
+});
+
+
+
+
+
+input.addEventListener("keydown",function(e){
+
+
+if(e.key === "-"){
+
+e.preventDefault();
+
+}
+
+
+});
+
+
+
+});
+
+
+</script>
+
+
+</body>
+</html>
