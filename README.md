@@ -160,6 +160,8 @@ AI-House-Price-App/
 
 1.Clone Repository 
 git clone https://github.com/Dawit360/House-Price-prediction
+
+
 cd House-Price-prediction 
 
 # 2. Install dependencies
