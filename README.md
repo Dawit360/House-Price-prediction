@@ -158,26 +158,28 @@ AI-House-Price-App/
 
 ▶️ How to Run
 
-1. Clone Repository
+1.Clone Repository 
+git clone https://github.com/Dawit360/House-Price-prediction
+cd House-Price-prediction 
 
-git clone https://github.com/YOUR_USERNAME/AI-House-Price-App.git
-cd AI-House-Price-App
-
-2. Install Dependencies
-
+# 2. Install dependencies
 pip install -r requirements.txt
 
-3. Train Model
-
-python train_model.py
-
-4. Run Flask App
-
+# 3. Run the Flask application (no training required)
 python app.py
 
-5. Open in Browser
+Then open your browser:
 
 http://127.0.0.1:5000/
+
+Important Notes
+
+Ensure that model.joblib is located in the same directory as app.py
+
+Verify that the model is loaded correctly in your application:
+
+import joblib
+model = joblib.load("model.joblib"
 
 ---
 
